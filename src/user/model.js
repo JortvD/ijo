@@ -1,5 +1,6 @@
 const {CryptoUtils} = require("ijo-utils");
 const Model = require("../database/model");
+const RoleHandler = require("./role/handler");
 
 /**
  * This is the model for a user.
@@ -13,12 +14,15 @@ class UserModel extends Model {
      * @param {String} data.username The username of the user.
      * @param {String} data.password The hashed password of the user.
      */
-    constructor({id, username, password}) {
+    constructor({id, username, password, roleHandler}={}, {roles}={}) {
         super();
+
+        if(roles === undefined) roles = [];
 
         this.id = id;
         this.username = username;
         this.password = password;
+        this.roleHandler = new RoleHandler(roles);
     }
 
     /**
@@ -50,7 +54,8 @@ class UserModel extends Model {
         return {
             id: this.id,
             username: this.username,
-            password: this.password
+            password: this.password,
+            permissions: this.roleHandler.toObject()
         };
     }
 }
